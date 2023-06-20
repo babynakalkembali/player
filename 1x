@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Daftar Video</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .video-title {
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .upload-date {
+      font-size: 12px;
+      color: #999;
+    }
+    .video-wrapper {
+      display: none;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var videoTitles = document.getElementsByClassName('video-title');
+
+      Array.from(videoTitles).forEach(function(title) {
+        title.addEventListener('click', function() {
+          var videoWrapper = this.nextElementSibling;
+          if (videoWrapper.style.display === 'block') {
+            videoWrapper.style.display = 'none';
+          } else {
+            var videoSrc = this.getAttribute('data-video-src');
+            var videoPlayer = '<div class="embed-responsive embed-responsive-16by9"><div class="embed-responsive-item"><video controls><source src="' + videoSrc + '"></video></div></div>';
+            videoWrapper.innerHTML = videoPlayer;
+            videoWrapper.style.display = 'block';
+          }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mt-5">Daftar Video</h1>
+    <div class="list-group mt-4">
+      <?php
+      $folder = './'; // Direktori folder tempat video berada
+      $files = scandir($folder); // Mendapatkan daftar file di dalam folder
+      foreach ($files as $file) {
+        // Hanya menampilkan file dengan ekstensi video (misalnya .mp4)
+        if (in_array(pathinfo($file, PATHINFO_EXTENSION), array('mp4', 'avi', 'mkv'))) {
+          $filePath = $folder . $file;
+          $uploadDate = date('d M Y', filemtime($filePath));
+          echo '<h5 class="video-title" data-video-src="' . $filePath . '">' . $file . '</h5>';
+          echo '<div class="video-wrapper"></div>';
+          echo '<p class="upload-date">Uploaded on ' . $uploadDate . '</p>';
+        }
+      }
+      ?>
+    </div>
+  </div>
+</body>
+</html>
